@@ -10,6 +10,7 @@ use App\Models\PembayaranKasbon;
 use App\Models\Transaksi;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
 {
@@ -43,12 +44,9 @@ class LaporanController extends Controller
             ->sum('nominal_bayar');
 
         // Untuk total pengeluaran restok, kita harus mengkalikan jumlah_masuk dengan harga_modal barang
-        $totalPengeluaranRestok = BarangMasuk::with('barang')
-            ->whereDate('tanggal_masuk', $hariIni)
-            ->get()
-            ->sum(function ($restok) {
-                return $restok->jumlah_masuk * $restok->barang->harga_modal;
-            });
+        $totalPengeluaranRestok = BarangMasuk::join('barangs', 'barang_masuks.id_barang', '=', 'barangs.id')
+            ->whereDate('barang_masuks.tanggal_masuk', $hariIni)
+            ->sum(DB::raw('barang_masuks.jumlah_masuk * barangs.harga_modal')) ?? 0;
 
         $laporan = Laporan::updateOrCreate(
             ['tanggal_laporan' => $hariIni],
