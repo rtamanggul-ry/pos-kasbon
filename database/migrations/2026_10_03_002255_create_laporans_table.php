@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('laporans', function (Blueprint $table) {
             $table->id();
+            $table->date('tanggal_laporan')->unique();
+            $table->integer('total_pendapatan_tunai')->default(0);
+            $table->integer('total_kasbon_baru')->default(0);
+            $table->integer('total_pembayaran_kasbon')->default(0);
+            $table->integer('total_pengeluaran_restok')->default(0);
             $table->timestamps();
         });
     }

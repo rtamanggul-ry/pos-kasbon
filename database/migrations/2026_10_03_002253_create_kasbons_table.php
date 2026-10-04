@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('kasbons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_pelanggan')->constrained('pelanggans')->cascadeOnDelete();
+            $table->foreignId('id_transaksi')->constrained('transaksis')->cascadeOnDelete();
+            $table->integer('total_utang');
+            $table->integer('sisa_tagihan');
+            $table->string('status')->default('Belum Lunas');
             $table->timestamps();
         });
     }

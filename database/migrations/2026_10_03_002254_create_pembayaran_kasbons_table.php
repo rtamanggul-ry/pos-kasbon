@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('pembayaran_kasbons', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_kasbon')->constrained('kasbons')->cascadeOnDelete();
+            $table->date('tanggal_bayar');
+            $table->integer('nominal_bayar');
             $table->timestamps();
         });
     }
