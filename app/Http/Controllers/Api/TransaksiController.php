@@ -35,8 +35,15 @@ class TransaksiController extends Controller
             $totalHarga = 0;
             $detailItems = [];
 
+            $barangIds = collect($validated['items'])->pluck('id_barang');
+            $barangs = Barang::whereIn('id', $barangIds)->lockForUpdate()->get()->keyBy('id');
+
             foreach ($validated['items'] as $item) {
-                $barang = Barang::findOrFail($item['id_barang']);
+                $barang = $barangs->get($item['id_barang']);
+
+                if (! $barang) {
+                    abort(404, "Barang dengan ID {$item['id_barang']} tidak ditemukan");
+                }
 
                 if ($barang->stok < $item['kuantitas']) {
                     abort(422, "Stok {$barang->nama_barang} tidak mencukupi. Tersisa: {$barang->stok}");
